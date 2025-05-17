@@ -1,0 +1,67 @@
+users
+├── user_id (PRIMARY KEY)
+├── email
+├── name
+├── preferred_currency
+├── budget_period (mensual, semanal, etc.)
+├── created_at
+├── updated_at
+├── timezone
+├── language_preference
+└── notification_settings (JSON)
+
+transactions
+├── transaction_id (PRIMARY KEY)
+├── user_id (FOREIGN KEY → users.user_id)
+├── amount
+├── currency
+├── category_id (FOREIGN KEY → categories.category_id)
+├── subcategory_id (FOREIGN KEY → subcategories.subcategory_id)
+├── establishment
+├── transaction_date
+├── recorded_date (cuándo se registró en el sistema)
+├── transaction_type (gasto, ingreso, transferencia, reembolso)
+├── payment_method
+├── is_recurring (boolean)
+├── recurrence_period (mensual, semanal, etc., puede ser NULL)
+├── notes
+└── source (manual, importado de CSV, importado de PDF, etc.)
+
+categories
+├── category_id (PRIMARY KEY)
+├── name
+├── system_default (boolean - indica si es predefinida o personalizada)
+├── icon_reference (para visualización en UI)
+└── description
+
+subcategories
+├── subcategory_id (PRIMARY KEY)
+├── category_id (FOREIGN KEY → categories.category_id)
+├── name
+├── system_default (boolean)
+└── description
+
+budgets
+├── budget_id (PRIMARY KEY)
+├── user_id (FOREIGN KEY → users.user_id)
+├── category_id (FOREIGN KEY → categories.category_id)
+├── subcategory_id (FOREIGN KEY → subcategories.subcategory_id, puede ser NULL)
+├── amount
+├── currency
+├── period_type (mensual, semanal, anual)
+├── start_date
+├── is_recurring (boolean)
+└── active (boolean)
+
+financial_goals
+├── goal_id (PRIMARY KEY)
+├── user_id (FOREIGN KEY → users.user_id)
+├── name
+├── description
+├── target_amount
+├── currency
+├── current_amount
+├── start_date
+├── target_date
+├── status (en progreso, completado, abandonado)
+└── priority (alta, media, baja)
