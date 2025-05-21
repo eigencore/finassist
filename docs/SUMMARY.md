@@ -10,4 +10,4 @@
   * [Running the Project](docs/getting-started/running.md)
 
 ## Database 
-* [Database Overview](db/overview.md)
+* [Database Overview](docs/db/overview.md)
