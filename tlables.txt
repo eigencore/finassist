@@ -1,36 +1,71 @@
+# FinAssist Database Schema
+
+## User Management
 users
 ├── user_id (PRIMARY KEY)
 ├── email
 ├── name
+├── password (hashed)
+├── phone_number
 ├── preferred_currency
-├── budget_period (mensual, semanal, etc.)
 ├── created_at
 ├── updated_at
 ├── timezone
 ├── language_preference
-└── notification_settings (JSON)
+├── mfa_enabled (boolean)
+└── mfa_type (app, sms, email)
 
+user_preferences (Pending)
+├── preference_id (PRIMARY KEY)
+├── user_id (FOREIGN KEY → users.user_id)
+├── category (notifications, privacy, display, analytics)
+├── key
+├── value
+└── updated_at
+
+## Accounts Management
+accounts
+├── account_id (PRIMARY KEY)
+├── user_id (FOREIGN KEY → users.user_id)
+├── name
+├── type (checking, savings, credit card, investment, etc.)
+├── institution
+├── balance
+├── currency
+├── last_updated
+├── account_number_masked
+├── active (boolean)
+└── notes
+
+## Transaction Management
 transactions
 ├── transaction_id (PRIMARY KEY)
 ├── user_id (FOREIGN KEY → users.user_id)
+├── account_id (FOREIGN KEY → accounts.account_id)
 ├── amount
 ├── currency
 ├── category_id (FOREIGN KEY → categories.category_id)
 ├── subcategory_id (FOREIGN KEY → subcategories.subcategory_id)
 ├── establishment
 ├── transaction_date
-├── recorded_date (cuándo se registró en el sistema)
-├── transaction_type (gasto, ingreso, transferencia, reembolso)
+├── recorded_date 
+├── transaction_type 
 ├── payment_method
 ├── is_recurring (boolean)
-├── recurrence_period (mensual, semanal, etc., puede ser NULL)
+├── recurrence_period (daily, weekly, monthly, yearly)
+├── parent_transaction_id (for recurring transactions)
 ├── notes
-└── source (manual, importado de CSV, importado de PDF, etc.)
+├── source (manual, imported from CSV, imported from PDF, etc.)
+├── attachment_url
+├── geo_location
+├── tags (JSON array or separate table)
+└── verification_status (verified, pending, disputed)
 
 categories
 ├── category_id (PRIMARY KEY)
+├── user_id (FOREIGN KEY → users.user_id, puede ser NULL)
 ├── name
-├── system_default (boolean - indica si es predefinida o personalizada)
+├── system_default (boolean - shows if the category is a system default or user-defined)
 ├── icon_reference (para visualización en UI)
 └── description
 
@@ -41,6 +76,7 @@ subcategories
 ├── system_default (boolean)
 └── description
 
+## Budget Management
 budgets
 ├── budget_id (PRIMARY KEY)
 ├── user_id (FOREIGN KEY → users.user_id)
@@ -50,18 +86,95 @@ budgets
 ├── currency
 ├── period_type (mensual, semanal, anual)
 ├── start_date
+├── end_date (optional)
 ├── is_recurring (boolean)
 └── active (boolean)
 
+## Income Management
+income
+├── income_id (PRIMARY KEY)
+├── user_id (FOREIGN KEY → users.user_id)
+├── account_id (FOREIGN KEY → accounts.account_id)
+├── amount
+├── currency
+├── income_type (salary, investment, freelance, gift, etc.)
+├── income_date
+├── recorded_date
+├── is_recurring (boolean)
+├── recurrence_period (daily, weekly, monthly, yearly)
+├── parent_income_id (for recurring income)
+├── notes
+├── source (manual, imported from CSV, imported from PDF, etc.)
+├── attachment_url
+└── verification_status
+
+## Financial Goals
 financial_goals
 ├── goal_id (PRIMARY KEY)
 ├── user_id (FOREIGN KEY → users.user_id)
 ├── name
 ├── description
 ├── target_amount
-├── currency
 ├── current_amount
 ├── start_date
 ├── target_date
-├── status (en progreso, completado, abandonado)
-└── priority (alta, media, baja)
+├── status (in progress, completed, on hold)
+├── priority (alta, media, baja)
+└── linked_account_id (FOREIGN KEY → accounts.account_id)
+
+## Analysis & Insights
+financial_insights
+├── insight_id (PRIMARY KEY)
+├── user_id (FOREIGN KEY → users.user_id)
+├── type (spending_pattern, budget_alert, saving_opportunity, etc.)
+├── description
+├── severity (information, warning, critical)
+├── created_at
+├── expired_at
+├── read_status
+├── related_categories (JSON)
+└── action_taken (boolean)
+
+## Simulations
+simulation_scenarios
+├── scenario_id (PRIMARY KEY)
+├── user_id (FOREIGN KEY → users.user_id)
+├── name
+├── description
+├── creation_date
+├── parameters (JSON)
+├── results (JSON)
+├── is_favorite (boolean)
+└── last_modified
+
+## Reporting
+saved_reports
+├── report_id (PRIMARY KEY)
+├── user_id (FOREIGN KEY → users.user_id)
+├── name
+├── type (spending_summary, budget_performance, tax_report, etc.)
+├── parameters (JSON)
+├── created_at
+├── last_generated
+├── is_scheduled (boolean)
+├── schedule_frequency (optional)
+└── delivery_method (in-app, email, etc.)
+
+## Utility Tables
+currency_conversions
+├── conversion_id (PRIMARY KEY)
+├── from_currency
+├── to_currency
+├── conversion_rate
+├── effective_date
+└── source (API provider)
+
+tags
+├── tag_id (PRIMARY KEY)
+├── user_id (FOREIGN KEY → users.user_id)
+├── name
+└── color
+
+transaction_tags (junction table)
+├── transaction_id (FOREIGN KEY → transactions.transaction_id)
+└── tag_id (FOREIGN KEY → tags.tag_id)
