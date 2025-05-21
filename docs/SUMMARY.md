@@ -4,10 +4,10 @@
 
 ## Getting Started
 
-* [Start Working with the Project](/docs/getting-started/README.md)
-  * [Installation](/docs/getting-started/installation.md)
-  * [Configuration](/docs/getting-started/configuration.md)
-  * [Running the Project](/docs/getting-started/running.md)
+* [Start Working with the Project](getting-started/README.md)
+  * [Installation](getting-started/installation.md)
+  * [Configuration](getting-started/configuration.md)
+  * [Running the Project](getting-started/running.md)
 
 ## Database 
-* [Database Overview](/docs/db/overview.md)
+* [Database Overview](db/overview.md)
