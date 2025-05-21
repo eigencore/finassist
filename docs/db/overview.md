@@ -1,5 +1,7 @@
 # FinAssist Database Documentation
 
+This is the documentation for the FinAssist database schema, which is designed to support an autonomous multi-agent financial auditor. The schema is structured to handle user accounts, financial transactions, budgeting, income tracking, financial goals, and advanced financial analysis.
+
 ## Overview
 
 This document provides detailed documentation for the FinAssist database schema, a comprehensive financial management system designed to support an autonomous multi-agent financial auditor. The database is structured to handle user accounts, financial transactions, budgeting, income tracking, financial goals, and advanced financial analysis.
