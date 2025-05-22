@@ -23,7 +23,7 @@ FinAssist is an autonomous multi-agent financial auditor system designed for per
 
 ## Current Architecture
 
-![FinAssist Architecture](../static/crud_system.png)
+![FinAssist Architecture](../static/curd_system.png)
 
 The system follows a multi-agent workflow:
 1. **User** submits financial requests in natural language
