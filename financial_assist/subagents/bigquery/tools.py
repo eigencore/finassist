@@ -338,28 +338,6 @@ def get_user_context(user_id=None):
             user_id = '{user_id}'
         """
         
-        accounts_query = f"""
-        SELECT 
-            account_id,
-            user_id,
-            name,
-            type,
-            institution,
-            balance,
-            currency,
-            last_updated,
-            account_number_masked,
-            active,
-            notes,
-            credit_limit,
-            interest_rate,
-            due_date
-        FROM 
-            `{project_id}.{dataset_id}.accounts`
-        WHERE 
-            user_id = '{user_id}'
-        """
-        
         logging.info(f"Executing user query: {user_query}")
         user_results = client.query(user_query).result()
         
@@ -378,60 +356,9 @@ def get_user_context(user_id=None):
             logging.info(f"Found user: {basic_info['name']}")
         else:
             logging.warning(f"User not found: {user_id}, using defaults")
-        
-        # Ejecutar consulta para obtener cuentas
-        logging.info(f"Executing accounts query: {accounts_query}")
-        account_results = client.query(accounts_query).result()
-        
-        # Procesar resultados de cuentas
-        accounts = []
-        for row in account_results:
-            # Crear un diccionario con todos los campos no nulos
-            account = {}
-            
-            # Campos obligatorios según el esquema
-            account["account_id"] = row.account_id
-            account["account_type"] = row.type  # Nota: en el esquema es 'type', pero en nuestro modelo usamos 'account_type'
-            
-            if row.name:
-                account["name"] = row.name
-                
-            if row.institution:
-                account["institution"] = row.institution
-                
-            if row.balance is not None:
-                account["balance"] = float(row.balance)  # Convertir NUMERIC a float
-                
-            if row.currency:
-                account["currency"] = row.currency
-                
-            if row.account_number_masked:
-                account["account_number_masked"] = row.account_number_masked
-                
-            if row.active is not None:
-                account["active"] = row.active
-                
-            if row.notes:
-                account["notes"] = row.notes
-                
-            if row.credit_limit is not None:
-                account["credit_limit"] = float(row.credit_limit)
-                
-            if row.interest_rate is not None:
-                account["interest_rate"] = float(row.interest_rate)
-                
-            if row.due_date:
-                account["due_date"] = row.due_date.isoformat()
-                
-            accounts.append(account)
-        
-        logging.info(f"Found {len(accounts)} accounts for user {user_id}")
-        
-        
         # Construir el contexto completo del usuario
         user_context = {
             "basic_info": basic_info,
-            "accounts": accounts,
             "current_date": datetime.datetime.now().strftime("%Y-%m-%d")
         }
         
@@ -444,30 +371,8 @@ def get_user_context(user_id=None):
     except Exception as e:
         logging.error(f"Error getting user context: {str(e)}")
         
-        # En caso de error, devolver un contexto predeterminado basado en el ejemplo del esquema
-        default_context = {
-            "basic_info": {
-                "user_id": "user_001",
-                "currency": "MXN",
-                "name": "Usuario Dummy",
-                "email": "dummy@example.com",
-                "created_at": datetime.datetime.now().isoformat()
-            },
-            "accounts": [
-                {
-                    "account_id": "acc_001",
-                    "account_type": "checking",
-                    "name": "Cuenta BBVA Nómina",
-                    "institution": "BBVA",
-                    "balance": 15000.0,
-                    "currency": "MXN",
-                    "account_number_masked": "****1234",
-                    "active": True,
-                    "notes": "Cuenta principal de nómina"
-                }
-            ],
-            "current_date": datetime.now().strftime("%Y-%m-%d")
-        }
         
         logging.info("Returning fallback user context due to error")
-        return json.dumps(default_context, indent=2)
+        raise Exception(
+            f"Error getting user context: {str(e)}"
+) 
