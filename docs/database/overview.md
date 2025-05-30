@@ -115,6 +115,17 @@ Categorizes transactions for organization and analysis.
 
 **Usage**: Enables transaction organization and categorization for analysis and budgeting.
 
+CREATE TABLE categories (
+  category_id STRING PRIMARY KEY,
+  user_id STRING NOT NULL,
+  name STRING,
+  icon_reference STRING,
+  system_default BOOLEAN,
+  description TEXT,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP
+);
+
 ### `subcategories`
 
 Further categorizes transactions within main categories.

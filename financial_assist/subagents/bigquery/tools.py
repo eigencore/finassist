@@ -376,3 +376,50 @@ def get_user_context(user_id=None):
         raise Exception(
             f"Error getting user context: {str(e)}"
 ) 
+        
+def get_user_categories(user_id: str) -> str:
+    """
+    Gets user categories formatted efficiently for the categorizer prompt.
+    """
+    
+    query = f"""
+    SELECT 
+      c.category_id,
+      c.name as category_name,
+      s.subcategory_id,
+      s.name as subcategory_name
+    FROM `ninth-botany-460322-r5.finassist_db.categories` c
+    LEFT JOIN `ninth-botany-460322-r5.finassist_db.subcategories` s 
+      ON c.category_id = s.category_id AND s.is_active = true
+    WHERE c.user_id = '{user_id}' 
+      AND c.is_active = true
+    ORDER BY c.name, s.name
+    """
+    
+    client = get_bq_client()
+    query_job = client.query(query)
+    results = query_job.result()
+    
+    # Formato compacto: cat_id:CategoryName|sub_id:SubName,sub_id:SubName
+    categories_dict = {}
+    
+    for row in results:
+        cat_name = row.category_name
+        cat_id = row.category_id
+        
+        if cat_name not in categories_dict:
+            categories_dict[cat_name] = {
+                'id': cat_id,
+                'subs': []
+            }
+        
+        if row.subcategory_id:
+            categories_dict[cat_name]['subs'].append(f"{row.subcategory_id}:{row.subcategory_name}")
+    
+    # Formato ultra-compacto
+    formatted = []
+    for cat_name, data in categories_dict.items():
+        subs_str = ",".join(data['subs']) if data['subs'] else "none"
+        formatted.append(f"{data['id']}:{cat_name}|{subs_str}")
+    
+    return "\n".join(formatted)
