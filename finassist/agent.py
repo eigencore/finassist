@@ -2,7 +2,7 @@ from google.adk.agents import Agent
 from google.adk.models.lite_llm import LiteLlm
 from google.genai import types
 
-from .subagents.transaction.agent import transaction_agent
+from .subagents.data_manager.agent import database_manager
 from .subagents.question.agent import question_agent
 
 from finassist.utils.utils import get_var_env
@@ -17,7 +17,7 @@ root_agent = Agent(
     instruction=MAIN_AGENT_PROMPT,
     description="This is the main agent that orchestrates the financial tasks.",
     sub_agents=[
-        transaction_agent,
+        database_manager,
         question_agent
     ],
     generate_content_config=types.GenerateContentConfig(
