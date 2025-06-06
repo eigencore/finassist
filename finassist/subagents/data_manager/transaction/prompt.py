@@ -8,7 +8,7 @@ Available tool:
 - add_transaction: Stores a new financial transaction in the database
 
 Required JSON schema for add_transaction:
-{
+{{
     "transaction_id": string,      // Auto-generated UUID
     "user_id": string,            // User identifier
     "account_id": string,         // Account identifier (CRITICAL - must match user's actual accounts)
@@ -20,7 +20,7 @@ Required JSON schema for add_transaction:
     "category": string,           // Primary category
     "subcategory": string,        // Specific subcategory
     "notes": string,             // Additional details
-}
+}}
 </TOOLS>
 
 <ACCOUNT_IDENTIFICATION_PRIORITY>
